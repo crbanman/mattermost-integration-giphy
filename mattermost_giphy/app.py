@@ -53,19 +53,23 @@ def new_post():
             slash_command = True
             resp_data['response_type'] = 'in_channel'
 
-        translate_text = data['text']
+        query_text = data['text']
         if not slash_command:
-            translate_text = data['text'][len(data['trigger_word']):]
+            query_text = data['text'][len(data['trigger_word']):]
 
-        if not translate_text:
+        if not query_text:
             raise Exception("No translate text provided, not hitting Giphy")
 
-        gif_url = giphy_translate(translate_text)
+        if GIPHY_METHOD == 'top_search':
+            gif_url = giphy_top_search(query_text)
+        else:
+            gif_url = giphy_translate(query_text)
+
         if not gif_url:
-            raise Exception('No gif url found for `{}`'.format(translate_text))
+            raise Exception('No gif url found for `{}`'.format(query_text))
 
         resp_data['text'] = '''`{}` searched for {}
-    {}'''.format(data.get('user_name', 'unknown').title(), translate_text, gif_url)
+    {}'''.format(data.get('user_name', 'unknown').title(), query_text, gif_url)
     except Exception as err:
         msg = err.message
         logging.error('unable to handle new post :: {}'.format(msg))
@@ -100,4 +104,31 @@ def giphy_translate(text):
         return urlunsplit(url)
     except Exception as err:
         logging.error('unable to translate giphy :: {}'.format(err))
+        return None
+
+def giphy_top_search(text):
+    """
+    Use Giphy search to get first available gif using the Giphy API.
+    """
+    try:
+        params = {}
+        params['q'] = text
+        params['limit'] = 1
+        params['rating'] = RATING
+        params['api_key'] = GIPHY_API_KEY
+
+        resp = requests.get('{}://api.giphy.com/v1/gifs/search'.format(SCHEME), params=params, verify=True)
+
+        if resp.status_code is not requests.codes.ok:
+            logging.error('Encountered error using Giphy API, text=%s, status=%d, response_body=%s' % (text, resp.status_code, resp.json()))
+            return None
+
+        resp_data = resp.json()
+
+        url = list(urlsplit(resp_data['data'][0]['images']['original']['url']))
+        url[0] = SCHEME.lower()
+
+        return urlunsplit(url)
+    except Exception as err:
+        logging.error('unable to search giphy :: {}'.format(err))
         return None

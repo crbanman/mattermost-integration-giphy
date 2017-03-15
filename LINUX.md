@@ -1,7 +1,7 @@
 ## How to
-The following procedure shows how to install this project on a Linux web server running Ubuntu 14.04. The following instructions work behind a firewall so long as the web server has access to your GitLab and Mattermost instances. 
+The following procedure shows how to install this project on a Linux web server running Ubuntu 14.04. The following instructions work behind a firewall so long as the web server has access to your GitLab and Mattermost instances.
 
-To install this project using a Linux-based web server, you will need a Linux/Ubuntu 14.04 web server supporting Python 2.7 or a compatible version. Other compatible operating systems and Python versions should also work. 
+To install this project using a Linux-based web server, you will need a Linux/Ubuntu 14.04 web server supporting Python 2.7 or a compatible version. Other compatible operating systems and Python versions should also work.
 
 Here's how to start:
 
@@ -32,6 +32,7 @@ Here's how to start:
     - `export MATTERMOST_GIPHY_TOKEN=<your-token-here>` This is the token you copied in the last section
     - `export MATTERMOST_GIPHY_HOST=<your-host>` or `export HOST=<your-host>` The host you want the integration (defaults to 0.0.0.0)
     - `export MATTERMOST_GIPHY_PORT=<your-port-number>` or `export PORT=<you-port-number>` The port number you want the integration to listen on (defaults to 5000)
+    - `export GIPHY_METHOD=<method>` The giphy api method use, either translate or top_search (defaults top_search)
  2. Source your bash profile
     - `source ~/.bash_profile`
  3. Run the server
@@ -44,7 +45,7 @@ That's it! You should be able to type `gif: hello` or `/gif hello` into any chan
 If you'd like to use this integration in a production envrionment, it is strongly recommended that you get a production Giphy API key from [here](http://api.giphy.com/submit). Once you have that you can configure the integration to use it:
 
 1. Stop the process currently running the integration
-1. Add the following lines to your `~/.bash_profile` or `~/.bashrc` 
+1. Add the following lines to your `~/.bash_profile` or `~/.bashrc`
    - `export GIPHY_API_KEY=<your-api-key-here>` With your Giphy API key
 2. Source your bash profile
    - `source ~/.bash_profile` or `source ~/.bashrc`
